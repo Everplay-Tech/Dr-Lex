@@ -1,0 +1,35 @@
+import "dotenv/config";
+import express from "express";
+import path from "path";
+import { fileURLToPath } from "url";
+import { bots } from "./routes/bots.js";
+import { missions } from "./routes/missions.js";
+import { policies } from "./routes/policies.js";
+import { treasury } from "./routes/treasury.js";
+import { feedback } from "./routes/feedback.js";
+import { templates } from "./routes/templates.js";
+import { runSelftest, mirrorRootPlan } from "./selftest.js";
+
+const app = express();
+app.use(express.json());
+
+app.get("/api/health", (req,res)=> res.json({ ok: true, time: new Date().toISOString(), policy_checksum: "v1" }));
+app.use("/api/bots", bots);
+app.use("/api/missions", missions);
+app.use("/api/policies", policies);
+app.use("/api/treasury", treasury);
+app.use("/api/feedback", feedback);
+app.use("/api/templates", templates);
+app.get("/api/selftest", (req,res)=> res.json(runSelftest()) );
+
+// serve static console
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+app.use("/", express.static(path.join(__dirname, "..", "web")));
+
+const PORT = parseInt(process.env.PORT || "8787",10);
+mirrorRootPlan();
+app.listen(PORT, ()=> {
+  console.log(`Dr Lex core up at http://localhost:${PORT}`);
+  console.log(`Open the Web Console at /`);
+});

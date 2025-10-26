@@ -1,0 +1,214 @@
+[
+  {
+    "intent": "demo.fabricant.gtm",
+    "energy_limit": 200,
+    "params": {
+      "product": "Mini-SaaS for inbox parsing"
+    },
+    "policy_id": "lex-default",
+    "id": "f1f50c9a-8dab-4ff3-8309-24c6de2e2932",
+    "created_at": "2025-10-26T14:31:28.261Z",
+    "status": "error"
+  },
+  {
+    "intent": "demo.fabricant.gtm",
+    "energy_limit": 200,
+    "params": {
+      "product": "Mini-SaaS for inbox parsing"
+    },
+    "policy_id": "lex-default",
+    "id": "306960af-fdbb-45a1-9a52-613cb7d6e626",
+    "created_at": "2025-10-26T14:36:06.532Z",
+    "status": "error"
+  },
+  {
+    "intent": "demo.fabricant.gtm",
+    "energy_limit": 200,
+    "params": {
+      "product": "Mini-SaaS for inbox parsing"
+    },
+    "policy_id": "lex-default",
+    "id": "a65002ba-0529-4b98-8588-dec12f7b7d04",
+    "created_at": "2025-10-26T15:01:28.144Z",
+    "status": "error"
+  },
+  {
+    "intent": "demo.fabricant.gtm",
+    "energy_limit": 200,
+    "params": {
+      "product": "Mini-SaaS for inbox parsing"
+    },
+    "policy_id": "lex-default",
+    "id": "7614aec0-ec29-4f72-8b1f-77544c91bf17",
+    "created_at": "2025-10-26T15:12:11.118Z",
+    "status": "error"
+  },
+  {
+    "intent": "demo.fabricant.gtm",
+    "energy_limit": 200,
+    "params": {
+      "product": "Mini-SaaS for inbox parsing"
+    },
+    "policy_id": "lex-default",
+    "id": "af2afb0b-fc6f-4b2f-b3c6-eeb9a8e9cfa5",
+    "created_at": "2025-10-26T15:14:27.304Z",
+    "status": "error"
+  },
+  {
+    "intent": "demo.fabricant.gtm",
+    "energy_limit": 5000,
+    "params": {
+      "product": "Mini-SaaS for inbox parsing"
+    },
+    "policy_id": "lex-default",
+    "id": "e269a3d7-30dc-4996-8e3d-e6f910f870e3",
+    "created_at": "2025-10-26T17:58:34.525Z",
+    "status": "done"
+  },
+  {
+    "intent": "demo.ledger.treasury",
+    "energy_limit": 1000,
+    "params": {
+      "inflow": 10000,
+      "desc": "seed capital"
+    },
+    "policy_id": "lex-default",
+    "id": "6c9c5aa9-5974-4d0b-b31d-a108db7eabdc",
+    "created_at": "2025-10-26T20:19:31.539Z",
+    "status": "done"
+  },
+  {
+    "intent": "demo.ledger.treasury",
+    "energy_limit": 1000,
+    "params": {
+      "inflow": 10000,
+      "desc": "seed capital"
+    },
+    "policy_id": "lex-default",
+    "id": "bfd71b47-7c13-4ea4-989c-264f2de158c8",
+    "created_at": "2025-10-26T20:19:31.662Z",
+    "status": "done"
+  },
+  {
+    "intent": "demo.orion.allocate",
+    "energy_limit": 1000,
+    "params": {},
+    "policy_id": "lex-default",
+    "id": "e7ee275b-1946-4cbd-b9ad-20578721fd60",
+    "created_at": "2025-10-26T20:24:26.228Z",
+    "status": "done"
+  },
+  {
+    "intent": "demo.orion.allocate",
+    "energy_limit": 1000,
+    "params": {},
+    "policy_id": "lex-default",
+    "id": "b33ac133-ab53-4a1c-9950-1de17ae40ba7",
+    "created_at": "2025-10-26T20:24:26.307Z",
+    "status": "done"
+  },
+  {
+    "intent": "demo.eirene.audit",
+    "energy_limit": 1000,
+    "params": {},
+    "policy_id": "lex-default",
+    "id": "f03bc9f3-ce99-445d-a29f-05e359b563a1",
+    "created_at": "2025-10-26T20:24:28.541Z",
+    "status": "done"
+  },
+  {
+    "intent": "demo.eirene.audit",
+    "energy_limit": 1000,
+    "params": {},
+    "policy_id": "lex-default",
+    "id": "253d1e36-affe-4d24-997f-51adca0f00ba",
+    "created_at": "2025-10-26T20:24:28.633Z",
+    "status": "done"
+  },
+  {
+    "intent": "demo.arbitra.scan",
+    "energy_limit": 2000,
+    "params": {},
+    "policy_id": "lex-default",
+    "id": "8f2248c6-d101-480a-9286-17aade32859d",
+    "created_at": "2025-10-26T20:28:01.376Z",
+    "status": "done"
+  },
+  {
+    "intent": "demo.merchant.offer",
+    "energy_limit": 2000,
+    "params": {
+      "engine": "A"
+    },
+    "policy_id": "lex-default",
+    "id": "ce934e15-2b98-4d4d-b6fd-336fc8b0d7bd",
+    "created_at": "2025-10-26T20:29:51.539Z",
+    "status": "done"
+  },
+  {
+    "intent": "demo.scribe.memo",
+    "energy_limit": 2000,
+    "params": {
+      "topic": "SaaS Pricing Strategy"
+    },
+    "policy_id": "lex-default",
+    "id": "c5a4d9e6-c845-46fe-9482-c684728bb279",
+    "created_at": "2025-10-26T20:30:28.921Z",
+    "status": "done"
+  },
+  {
+    "intent": "demo.fabricant.gtm",
+    "energy_limit": 5000,
+    "params": {
+      "product": "Mini-SaaS for inbox parsing"
+    },
+    "policy_id": "lex-default",
+    "id": "6772b95c-bbc1-444d-a028-3419125992da",
+    "created_at": "2025-10-26T20:48:38.452Z",
+    "status": "done"
+  },
+  {
+    "intent": "demo.fabricant.gtm",
+    "energy_limit": 5000,
+    "params": {
+      "product": "Mini-SaaS for inbox parsing"
+    },
+    "policy_id": "lex-default",
+    "id": "87c1ce69-84b0-49ff-81bf-80879e96d56c",
+    "created_at": "2025-10-26T20:48:40.113Z",
+    "status": "done"
+  },
+  {
+    "intent": "demo.fabricant.gtm",
+    "energy_limit": 5000,
+    "params": {
+      "product": "Mini-SaaS for inbox parsing"
+    },
+    "policy_id": "lex-default",
+    "id": "cacd5df3-1288-42f4-acaf-128cc0a2138a",
+    "created_at": "2025-10-26T20:53:19.741Z",
+    "status": "done"
+  },
+  {
+    "intent": "demo.fabricant.gtm",
+    "energy_limit": 5000,
+    "params": {
+      "product": "Mini-SaaS for inbox parsing"
+    },
+    "policy_id": "lex-default",
+    "id": "f6902517-ff23-41b5-aa76-ba5b370ef84e",
+    "created_at": "2025-10-26T20:55:26.709Z",
+    "status": "done"
+  },
+  {
+    "intent": "demo.fabricant.gtm",
+    "energy_limit": 5000,
+    "params": {
+      "product": "Mini-SaaS for inbox parsing"
+    },
+    "policy_id": "lex-default",
+    "id": "0ec210f8-02cd-418d-b8db-fce4f0b841b1",
+    "created_at": "2025-10-26T21:47:37.898Z",
+    "status": "done"
+  }
+]

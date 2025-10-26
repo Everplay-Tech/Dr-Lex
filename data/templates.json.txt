@@ -1,0 +1,8 @@
+{
+  "id": "...",
+  "intent": "demo.fabricant.gtm",
+  "inputs": {"product":"Mini-SaaS"},
+  "policy_id": "lex-default",
+  "outcome": {"EI":0.82,"LS":0.63,"DS":0.76},
+  "artifact_uri": "data/artifacts/<id>.json"
+}

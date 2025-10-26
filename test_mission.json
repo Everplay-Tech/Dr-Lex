@@ -1,0 +1,13 @@
+﻿{
+  "mission": {
+    "id": "test-123",
+    "intent": "demo.fabricant.gtm",
+    "params": {"product": "Mini-SaaS for inbox parsing"},
+    "policy_id": "lex-default",
+    "energy_limit": 200
+  },
+  "policy": {
+    "id": "lex-default",
+    "budget": {"max_ms": 5000, "max_events": 200}
+  }
+}

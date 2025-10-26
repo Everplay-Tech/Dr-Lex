@@ -1,0 +1,2 @@
+{"mission_id":"f1f50c9a-8dab-4ff3-8309-24c6de2e2932","ts":"2025-10-26T14:31:28.261Z","level":"info","payload":{"msg":"spawn","script":"bots/fabricant/agent.py","policy_id":"lex-default","policy_checksum":"e4710fc445fac0e8"}}
+{"mission_id":"f1f50c9a-8dab-4ff3-8309-24c6de2e2932","ts":"2025-10-26T14:31:28.633Z","level":"error","payload":{"exit":null,"elapsed_ms":257,"events":1}}

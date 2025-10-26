@@ -1,0 +1,85 @@
+# FUTURE FOUNDATION  
+## INTERNAL CURRENCY AND TREASURY POLICY  
+### ($LEX Closed-Economy Specification)
+
+---
+
+### ARTICLE I — PURPOSE AND SCOPE
+1. The Foundation establishes an internal unit of account known as **“$LEX”** (“Lex Token”) for use exclusively within Foundation programs and affiliated research environments.  
+2. $LEX shall function as a closed, non-transferable medium of record representing value, contribution, and governance weight in internal operations.  
+3. The $LEX system is **not a public currency or security** and may not be sold, traded, or offered to the general public without explicit Board authorization and compliance review.
+
+---
+
+### ARTICLE II — ISSUANCE AND SUPPLY
+1. **Total Authorized Supply:** 100,000,000 $LEX units.  
+2. **Initial Mint:** 10,000,000 $LEX to be held in the **Foundation Treasury Account** for allocation under Article III.  
+3. **Minting Authority:** The Board of Trustees, acting through the Treasurer, may mint or burn tokens only upon documented resolution.  
+4. **Audit Trail:** All mints, burns, and transfers must be recorded in the **Treasury Ledger** located at `/data/treasury/ledger.json` and mirrored to `/archive/` monthly.
+
+---
+
+### ARTICLE III — ALLOCATION POLICY
+| Allocation Category | Percentage of Initial Mint | Description |
+|---------------------|----------------------------|--------------|
+| **Treasury Reserve** | 40 % | Liquidity buffer and long-term sustainability fund. |
+| **Research & Development** | 25 % | Grants for technical innovation, AI ethics research, and Containment-Chain modules. |
+| **Impact & Empathy Projects** | 20 % | Programs that directly reduce suffering or increase access; approved by the Ethics Committee. |
+| **Operational Runway** | 10 % | Salaries, administration, and compliance. |
+| **Wisdom Credits Pool** | 5 % | Incentives and acknowledgments for human contributions, defined in `/docs/root-system-plan.md`. |
+
+All allocations are subject to quarterly review and may be rebalanced by Board vote.
+
+---
+
+### ARTICLE IV — GOVERNANCE AND VOTING
+1. Each Trustee wallet and approved research division is assigned **non-transferable governance $LEX** tokens.  
+2. One (1) governance $LEX equals one (1) vote within internal DAO-style polls conducted on the Foundation’s private network.  
+3. Major actions—minting, burning, allocation above 1 % of supply, or external licensing—require a two-thirds (⅔) supermajority.  
+4. Minor operational votes require a simple majority.
+
+---
+
+### ARTICLE V — TREASURY MECHANICS
+1. The Treasury shall maintain a **multi-signature governance wallet** requiring not fewer than two (2) human Trustees and one (1) AI verification node (Dr Lex) to co-sign transactions.  
+2. Dr Lex may generate and verify transaction data but cannot unilaterally execute transfers.  
+3. Monthly reconciliations are reviewed by the Finance & Treasury Committee and archived with SHA-256 checksums.  
+4. External audits shall be commissioned at least annually.
+
+---
+
+### ARTICLE VI — EMPATHY AND WISDOM METRICS
+1. Allocation of funds and token rewards shall align with the **Empathy Index (EI)** and **Wisdom Score (WC)** defined in the Dr Lex documentation.  
+2. Projects achieving EI ≥ 0.75 and WC ≥ 0.7 qualify for enhanced funding multipliers of up to 1.2× baseline.  
+3. Metrics are recorded in `/data/metrics.json` and incorporated into quarterly Board reports.
+
+---
+
+### ARTICLE VII — COMPLIANCE AND REPORTING
+1. The Foundation shall maintain detailed books of account in accordance with Generally Accepted Accounting Principles (GAAP) and applicable Illinois statutes.  
+2. Annual financial statements shall include:
+   - Total $LEX minted and burned  
+   - Outstanding balances by allocation category  
+   - Summary of EI and WC multipliers applied  
+3. These statements will be published to Trustees and archived internally; limited summaries may be released publicly at the Board’s discretion.
+
+---
+
+### ARTICLE VIII — AMENDMENTS
+1. This Tokenomics Policy may be amended by two-thirds (⅔) vote of the Board of Trustees.  
+2. All amendments shall be timestamped, digitally signed, and mirrored to `/foundation/ip-register.json`.
+
+---
+
+### ARTICLE IX — ADOPTION
+Executed this ___ day of __________, 20___, in the State of Illinois.
+
+| Name | Title | Signature | Date |
+|------|--------|------------|------|
+| Mitchell Burns | Founder / Executive Director | ____________________ | __________ |
+| [Trustee 2] | Treasurer | ____________________ | __________ |
+| [Trustee 3] | Compliance Officer | ____________________ | __________ |
+
+---
+
+*(End of Tokenomics Policy)*

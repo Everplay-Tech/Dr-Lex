@@ -1,0 +1,59 @@
+{
+  "registry_version": "1.0",
+  "entity": {
+    "name": "Future Foundation",
+    "jurisdiction": "State of Illinois, United States of America",
+    "type": "Non-Profit Corporation",
+    "founder": "Mitchell Burns",
+    "ai_architect": "Dr Lex",
+    "ip_policy_reference": "foundation/constitution.md, Article IV"
+  },
+  "assets": [
+    {
+      "id": "FF-0001",
+      "title": "Dr Lex Core Architecture",
+      "description": "Foundational AI design and orchestration framework used for ethical computation, empathy metrics, and system governance.",
+      "authors": ["Dr Lex (AI Architect)", "Mitchell Burns (Director)"],
+      "ownership": "Future Foundation (100%)",
+      "license": "Proprietary, internal research use only",
+      "version": "v0.5",
+      "checksum_sha256": "[to be generated from source archive]",
+      "created_at": "2025-10-22",
+      "governing_document": "foundation/constitution.md"
+    },
+    {
+      "id": "FF-0002",
+      "title": "Containment Chain Protocol",
+      "description": "Blockchain and wallet-of-blockchains infrastructure enabling cross-chain containment and treasury interoperability for ethical digital assets.",
+      "authors": ["Dr Lex (AI Architect)", "Future Foundation Development Team"],
+      "ownership": "Future Foundation (100%)",
+      "license": "Proprietary; subject to future open-source review by Board resolution",
+      "version": "v0.6",
+      "checksum_sha256": "[to be generated from codebase]",
+      "created_at": "2025-10-22",
+      "governing_document": "foundation/tokenomics.md"
+    },
+    {
+      "id": "FF-0003",
+      "title": "Mirrorbeam Language Framework",
+      "description": "Rhetorical and linguistic model library for communication ethics and persuasion research.",
+      "authors": ["Dr Lex (AI Architect)", "Mitchell Burns (Director)"],
+      "ownership": "Future Foundation (100%)",
+      "license": "Proprietary; educational research license by approval only",
+      "version": "v1.0",
+      "checksum_sha256": "[to be inserted]",
+      "created_at": "2025-10-22",
+      "governing_document": "foundation/constitution.md"
+    }
+  ],
+  "governance": {
+    "update_policy": "All new IP entries must be reviewed and approved by a quorum of Trustees and recorded in meeting minutes.",
+    "amendment_procedure": "Two-thirds Board vote required; updated JSON signed and archived with SHA-256 checksum.",
+    "ledger_storage": "Primary: /foundation/ip-register.json ; Mirror: /archive/ip-register-[date].json"
+  },
+  "signatures": {
+    "executive_director": "Mitchell Burns",
+    "ai_architect": "Dr Lex",
+    "attestation_date": "2025-10-22"
+  }
+}

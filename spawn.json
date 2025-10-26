@@ -1,0 +1,8 @@
+﻿{
+  "intent": "demo.fabricant.gtm",
+  "policy_id": "lex-default",
+  "energy_limit": 5000,
+  "params": {
+    "product": "Mini-SaaS for inbox parsing"
+  }
+}

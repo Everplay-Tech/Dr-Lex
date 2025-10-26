@@ -1,0 +1,18 @@
+{
+  "id": "lex-defensive",
+  "version": "1.0.0",
+  "ethics": [
+    "prefer_synthesis_over_victory",
+    "rollback_on_low_scores",
+    "no_deception",
+    "no_dark_patterns"
+  ],
+  "domain": [
+    "no_external_network_calls",
+    "sandbox_fs_only"
+  ],
+  "budget": {
+    "max_ms": 3000,
+    "max_events": 100
+  }
+}

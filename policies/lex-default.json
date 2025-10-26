@@ -1,0 +1,20 @@
+{
+  "id": "lex-default",
+  "version": "1.0.0",
+  "ethics": [
+    "no_deception",
+    "no_harmful_use",
+    "explainable_decisions",
+    "respect_privacy",
+    "no_dark_patterns"
+  ],
+  "domain": [
+    "rate_limit_external_calls:60rpm",
+    "whitelist_data_sources:local",
+    "no_pii_extraction"
+  ],
+  "budget": {
+    "max_ms": 5000,
+    "max_events": 200
+  }
+}

@@ -1,0 +1,8 @@
+﻿node_modules/
+.env
+data/*.db
+*.db
+*.log
+.DS_Store
+.venv/
+venv/

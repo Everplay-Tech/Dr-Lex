@@ -1,0 +1,6 @@
+﻿{
+  "intent": "demo.merchant.offer",
+  "policy_id": "lex-default",
+  "energy_limit": 2000,
+  "params": {"engine": "A"}
+}

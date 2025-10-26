@@ -1,0 +1,11 @@
+{
+  "name": "Base",
+  "growth_mom": 0.08,
+  "runway_m": 18,
+  "alloc": {
+    "runway": 0.5,
+    "r_and_d": 0.2,
+    "impact": 0.2,
+    "buffer": 0.1
+  }
+}

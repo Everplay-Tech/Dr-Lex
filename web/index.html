@@ -1,0 +1,175 @@
+
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Dr Lex — Console</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 20px; }
+    .row { display:flex; gap:12px; flex-wrap: wrap; align-items: center; }
+    input, select, button, textarea { font-size: 14px; padding:8px; }
+    #log { white-space: pre-wrap; background:#0b1020; color:#d6e1ff; padding:12px; border-radius:8px; min-height: 240px;}
+    .card { border:1px solid #e5e7eb; border-radius:12px; padding:12px; margin-top: 12px; }
+    .muted { color:#555; font-size:12px; }
+  </style>
+</head>
+<body>
+  <h1>Dr Lex — Console <span id="eiTicker" class="muted" style="font-weight:normal;font-size:14px;margin-left:12px;">EI: --</span></h1>
+
+  <nav class="row">
+    <a href="#" id="tabConsole">Console</a> |
+    <a href="#" id="tabTreasury">Treasury</a> |
+    <a href="#" id="tabTemplates">Templates</a>
+  </nav>
+
+  <div class="card" id="consolePanel">
+    <div class="row">
+      <label>Policy:</label> <select id="policy"></select>
+      <label>Bot:</label>
+      <select id="bot">
+        <option value="demo.fabricant.gtm">Fabricant (GTM plan)</option>
+        <option value="demo.arbitra.scan">Arbitra (market signals)</option>
+        <option value="demo.ledger.treasury">Ledger (treasury)</option>
+        <option value="demo.orion.allocate">Orion (allocation)</option>
+        <option value="demo.eirene.audit">Eirene (impact audit)</option>
+      </select>
+      <label>Product/Note:</label>
+      <input id="param" size="30" placeholder="Mini-SaaS for inbox parsing"/>
+      <label>Energy:</label>
+      <input id="energy" type="number" value="100" style="width:90px"/>
+      <button id="spawn">Spawn</button>
+    </div>
+    <p class="muted">Spawns a mission and streams events below. Use Missions/Treasury to review history and scores.</p>
+
+    <h3>Live Events</h3>
+    <div class="row"><button id="fbUp">👍 Helpful</button><button id="fbDown">👎 Not Helpful</button></div>
+    <div id="log"></div>
+
+    <h3>Missions</h3>
+    <div class="row"><button id="refresh">Refresh</button></div>
+    <div id="missions"></div>
+  </div>
+
+  <div id="treasuryPanel" style="display:none">
+    <h2>Treasury</h2>
+    <div class="row">
+      <button id="tRefresh">Refresh</button>
+      <button id="tAllocate">Re-allocate (Orion)</button>
+      <button id="tAudit">Audit Impact (Eirene)</button>
+    </div>
+    <div class="card">
+      <canvas id="allocChart" width="360" height="360"></canvas>
+      <div id="tStats" class="muted"></div>
+      <div id="tTx"></div>
+    </div>
+  </div>
+
+  <div id="templatesPanel" style="display:none">
+    <h2>Templates</h2>
+    <div class="row"><button id="tplRefresh">Refresh</button></div>
+    <div id="tplList"></div>
+  </div>
+
+<script>
+async function loadPolicies(){
+  const res = await fetch("/api/policies"); const j = await res.json();
+  const sel = document.getElementById("policy"); sel.innerHTML = "";
+  (j.policies||[]).forEach(p => { const o=document.createElement("option"); o.value=p.id; o.textContent=`${p.id} (${p.checksum})`; sel.appendChild(o); });
+}
+loadPolicies();
+
+async function spawn(){
+  const intent = document.getElementById("bot").value;
+  const param = document.getElementById("param").value;
+  const energy = parseInt(document.getElementById("energy").value,10);
+  const policy_id = document.getElementById("policy").value;
+  const res = await fetch("/api/bots/spawn", { method:"POST", headers:{ "Content-Type":"application/json" },
+    body: JSON.stringify({ intent, policy_id, energy_limit: energy, params: { product: param } })
+  });
+  const j = await res.json(); if(j.mission_id){ stream(j.mission_id); } else { log(j); }
+}
+function log(msg){ const el = document.getElementById("log"); el.textContent += (typeof msg === "string" ? msg : JSON.stringify(msg)) + "\n"; el.scrollTop = el.scrollHeight; }
+function stream(id){
+  log("Streaming events for mission: " + id);
+  const es = new EventSource(`/api/bots/${id}/events`);
+  es.onmessage = (ev)=> { try{ log(JSON.parse(ev.data)); } catch{ log(ev.data); } };
+  es.onerror = ()=> { log("SSE closed."); es.close(); };
+}
+async function refresh(){
+  const res = await fetch("/api/missions"); const j = await res.json();
+  const wrap = document.getElementById("missions"); wrap.innerHTML = "";
+  (j.missions||[]).reverse().forEach(m => {
+    const div = document.createElement("div"); div.className = "card";
+    div.innerHTML = `<b>${m.intent}</b><br/><span class="muted">${m.id} • ${m.status} • ${m.created_at}</span><br/>
+      <button data-id="${m.id}" class="view">View</button>
+      <button data-id="${m.id}" class="score">Score</button>`;
+    wrap.appendChild(div);
+  });
+  wrap.querySelectorAll(".view").forEach(b => b.onclick = async () => {
+    const id = b.getAttribute("data-id"); const r = await fetch(`/api/missions/${id}`); const j = await r.json(); log(j);
+  });
+  wrap.querySelectorAll(".score").forEach(b => b.onclick = async () => {
+    const id = b.getAttribute("data-id"); const r = await fetch(`/api/missions/${id}/score`); const j = await r.json(); log(j);
+  });
+}
+document.getElementById("spawn").onclick = spawn;
+document.getElementById("refresh").onclick = refresh;
+refresh();
+
+// EI ticker + feedback
+async function tickEI(){ try{ const r=await fetch("/api/feedback/ei"); const j=await r.json(); document.getElementById("eiTicker").textContent = `EI: ${j.EI?.toFixed(2)||"--"} (HR:${(j.HR*100|0)}% RL:${Math.round(j.RL_ms)}ms)`; }catch{} }
+setInterval(tickEI, 1500); tickEI();
+document.getElementById("fbUp").onclick = async ()=>{ await fetch("/api/feedback", { method:"POST", headers:{ "Content-Type":"application/json" }, body: JSON.stringify({ rating: "up" }) }); tickEI(); };
+document.getElementById("fbDown").onclick = async ()=>{ await fetch("/api/feedback", { method:"POST", headers:{ "Content-Type":"application/json" }, body: JSON.stringify({ rating: "down" }) }); tickEI(); };
+
+// Tabs
+function showPanel(which){
+  document.getElementById("consolePanel").style.display = which==="console" ? "block":"none";
+  document.getElementById("treasuryPanel").style.display = which==="treasury" ? "block":"none";
+  document.getElementById("templatesPanel").style.display = which==="templates" ? "block":"none";
+}
+document.getElementById("tabConsole").onclick = (e)=>{ e.preventDefault(); showPanel("console"); };
+document.getElementById("tabTreasury").onclick = (e)=>{ e.preventDefault(); showPanel("treasury"); loadTreasury(); };
+document.getElementById("tabTemplates").onclick = (e)=>{ e.preventDefault(); showPanel("templates"); loadTemplates(); };
+showPanel("console");
+
+// Treasury JS
+let allocChart;
+async function loadTreasury(){
+  const r = await fetch("/api/treasury"); const j = await r.json();
+  const led = j.ledger;
+  if(!led){ document.getElementById("tStats").textContent = "No ledger yet. Use API or Ledger bot."; return; }
+  const b = led.balances;
+  const data = [b.runway||0, b.r_and_d||0, b.impact||0, b.buffer||0];
+  const labels = ["Runway","R&D","Impact","Buffer"];
+  const ctx = document.getElementById("allocChart").getContext("2d");
+  if(allocChart) { allocChart.destroy(); }
+  allocChart = new Chart(ctx, { type:"doughnut", data:{ labels, datasets:[{ data }] }, options:{ responsive:false } });
+  const eic = j.impact?.EIC;
+  document.getElementById("tStats").textContent = `Cash: $${(b.cash||0).toLocaleString()} • EIC: ${eic?eic.toFixed(2):"n/a"} • Updated: ${led.timestamp}`;
+  const tx = (led.transactions||[]).slice(-5).map(t => `• ${t.ts} — ${t.type} ${t.amount||0} — ${t.desc||""}`).join("\n");
+  document.getElementById("tTx").textContent = tx;
+}
+document.getElementById("tRefresh").onclick = loadTreasury;
+document.getElementById("tAllocate").onclick = async ()=>{ await fetch("/api/treasury/allocate",{method:"POST"}); setTimeout(loadTreasury, 500); };
+document.getElementById("tAudit").onclick = async ()=>{ await fetch("/api/treasury/audit",{method:"POST"}); setTimeout(loadTreasury, 700); };
+
+// Templates JS
+async function loadTemplates(){
+  const r = await fetch("/api/templates"); const j = await r.json();
+  const wrap = document.getElementById("tplList"); wrap.innerHTML = "";
+  (j.templates||[]).reverse().forEach(t => {
+    const d = document.createElement("div"); d.className="card";
+    d.innerHTML = `<b>${t.intent}</b> • <span class="muted">${t.id}</span><br/>Outcome: EI ${t.outcome.EI.toFixed(2)} • LS ${t.outcome.LS.toFixed(2)} • DS ${t.outcome.DS.toFixed(2)}<br/><button data-id="${t.id}" class="replay">Replay</button>`;
+    wrap.appendChild(d);
+  });
+  wrap.querySelectorAll(".replay").forEach(b => b.onclick = async () => {
+    const id = b.getAttribute("data-id"); await fetch(`/api/templates/replay/${id}`, { method:"POST" });
+  });
+}
+document.getElementById("tplRefresh").onclick = loadTemplates;
+</script>
+</body>
+</html>

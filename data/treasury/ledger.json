@@ -1,0 +1,24 @@
+{
+  "timestamp": "2025-10-26T20:24:28.868605Z",
+  "balances": {
+    "cash": 110000.0,
+    "runway": 0.5000000000000001,
+    "r_and_d": 0.20000000000000004,
+    "impact": 0.20000000000000004,
+    "buffer": 0.10000000000000002
+  },
+  "transactions": [
+    {
+      "ts": "2025-10-26T20:19:31.849611Z",
+      "type": "inflow",
+      "amount": 10000.0,
+      "desc": "seed capital"
+    },
+    {
+      "ts": "2025-10-26T20:24:28.868268Z",
+      "type": "audit",
+      "amount": 0,
+      "desc": "Eirene audit: hold (EIC=0.71)"
+    }
+  ]
+}
