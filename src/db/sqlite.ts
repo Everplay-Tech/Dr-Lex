@@ -90,7 +90,7 @@ async function init() {
   console.log('PostgreSQL initialized');
 }
 
-export const postgresDB: Database = {
+export const sqliteDB: Database = {
   init,
   users,
   usage
