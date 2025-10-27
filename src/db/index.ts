@@ -7,12 +7,22 @@ console.log(USE_POSTGRES ? '🐘 Using PostgreSQL' : '💾 Using SQLite');
 let dbInstance: Database;
 
 if (USE_POSTGRES) {
-  const { postgresDB } = await import('./postgres.js');
-  dbInstance = postgresDB;
+  console.log('Importing postgres module...');
+  const pgModule = await import('./postgres.js');
+  console.log('Postgres module:', pgModule);
+  dbInstance = pgModule.postgresDB;
+  console.log('dbInstance set to:', dbInstance);
 } else {
-  const { sqliteDB } = await import('./sqlite.js');
-  dbInstance = sqliteDB;
+  console.log('Importing sqlite module...');
+  const sqliteModule = await import('./sqlite.js');
+  console.log('SQLite module:', sqliteModule);
+  console.log('sqliteDB from module:', sqliteModule.sqliteDB);
+  dbInstance = sqliteModule.sqliteDB;
+  console.log('dbInstance set to:', dbInstance);
 }
+
+console.log('Final dbInstance:', dbInstance);
+console.log('dbInstance.users:', dbInstance?.users);
 
 // Export clean interface
 export const initDB = () => dbInstance.init();
