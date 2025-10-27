@@ -1,16 +1,69 @@
 import postgres from 'postgres';
+import type { Database, User, Usage } from './types.js';
 
+// Create connection with Railway-optimized settings
 const sql = postgres(process.env.DATABASE_URL!, {
-  ssl: 'require',
-  connection: {
-    options: `--client_encoding=UTF8`,
-  },
+  ssl: 'prefer', // Changed from 'require' to 'prefer'
   max: 10,
   idle_timeout: 20,
-  connect_timeout: 10,
+  connect_timeout: 30,
+  prepare: false, // Disable prepared statements for compatibility
 });
 
-export async function initDB() {
+const users = {
+  async create(user: Omit<User, 'created_at'>) {
+    await sql`
+      INSERT INTO users ${sql(user)}
+    `;
+  },
+
+  async findByEmail(email: string): Promise<User | null> {
+    const [user] = await sql<User[]>`
+      SELECT * FROM users WHERE email = ${email} LIMIT 1
+    `;
+    return user || null;
+  },
+
+  async findById(id: string): Promise<User | null> {
+    const [user] = await sql<User[]>`
+      SELECT * FROM users WHERE id = ${id} LIMIT 1
+    `;
+    return user || null;
+  },
+
+  async findByApiKey(apiKey: string): Promise<User | null> {
+    const [user] = await sql<User[]>`
+      SELECT * FROM users WHERE api_key = ${apiKey} LIMIT 1
+    `;
+    return user || null;
+  }
+};
+
+const usage = {
+  async record(userId: string, missionId: string, botType: string, energyUsed: number) {
+    await sql`
+      INSERT INTO usage (user_id, mission_id, bot_type, energy_used)
+      VALUES (${userId}, ${missionId}, ${botType}, ${energyUsed})
+    `;
+  },
+
+  async getUsage(userId: string, after?: string): Promise<Usage[]> {
+    if (after) {
+      return await sql<Usage[]>`
+        SELECT * FROM usage 
+        WHERE user_id = ${userId} AND timestamp >= ${after}
+        ORDER BY timestamp DESC
+      `;
+    }
+    return await sql<Usage[]>`
+      SELECT * FROM usage 
+      WHERE user_id = ${userId}
+      ORDER BY timestamp DESC
+    `;
+  }
+};
+
+async function init() {
   await sql`
     CREATE TABLE IF NOT EXISTS users (
       id TEXT PRIMARY KEY,
@@ -34,57 +87,11 @@ export async function initDB() {
     )
   `;
 
-  console.log('PostgreSQL database initialized');
+  console.log('PostgreSQL initialized');
 }
 
-export const userDB = {
-  create: async (user: any) => {
-    const { id, email, password_hash, name, api_key } = user;
-    await sql`
-      INSERT INTO users (id, email, password_hash, name, api_key)
-      VALUES (${id}, ${email}, ${password_hash}, ${name}, ${api_key})
-    `;
-  },
-  
-  findByEmail: async (email: string) => {
-    const result = await sql`SELECT * FROM users WHERE email = ${email}`;
-    return result[0] || null;
-  },
-  
-  findById: async (id: string) => {
-    const result = await sql`SELECT * FROM users WHERE id = ${id}`;
-    return result[0] || null;
-  },
-  
-  findByApiKey: async (apiKey: string) => {
-    const result = await sql`SELECT * FROM users WHERE api_key = ${apiKey}`;
-    return result[0] || null;
-  }
+export const postgresDB: Database = {
+  init,
+  users,
+  usage
 };
-
-export const usageDB = {
-  record: async (userId: string, missionId: string, botType: string, energyUsed: number) => {
-    await sql`
-      INSERT INTO usage (user_id, mission_id, bot_type, energy_used)
-      VALUES (${userId}, ${missionId}, ${botType}, ${energyUsed})
-    `;
-  },
-  
-  getUsage: async (userId: string, after?: string) => {
-    if (after) {
-      return await sql`
-        SELECT * FROM usage 
-        WHERE user_id = ${userId} AND timestamp >= ${after}
-        ORDER BY timestamp DESC
-      `;
-    } else {
-      return await sql`
-        SELECT * FROM usage 
-        WHERE user_id = ${userId}
-        ORDER BY timestamp DESC
-      `;
-    }
-  }
-};
-
-export const db = sql;
