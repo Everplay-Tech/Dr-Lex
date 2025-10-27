@@ -1,18 +1,17 @@
+import * as sqlite from './sqlite.js';
+
 const usePostgres = !!process.env.DATABASE_URL;
+
+let postgres: any = null;
 
 if (usePostgres) {
   console.log('Using PostgreSQL');
-  // Dynamic import for PostgreSQL
-  const postgres = await import('./postgres.js');
-  export const initDB = postgres.initDB;
-  export const userDB = postgres.userDB;
-  export const usageDB = postgres.usageDB;
-  export const db = postgres.db;
+  postgres = await import('./postgres.js');
 } else {
   console.log('Using SQLite');
-  const sqlite = await import('./sqlite.js');
-  export const initDB = sqlite.initDB;
-  export const userDB = sqlite.userDB;
-  export const usageDB = sqlite.usageDB;
-  export const db = sqlite.db;
 }
+
+export const initDB = usePostgres ? postgres.initDB : sqlite.initDB;
+export const userDB = usePostgres ? postgres.userDB : sqlite.userDB;
+export const usageDB = usePostgres ? postgres.usageDB : sqlite.usageDB;
+export const db = usePostgres ? postgres.db : sqlite.db;
