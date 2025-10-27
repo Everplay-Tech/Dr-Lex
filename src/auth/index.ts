@@ -1,4 +1,4 @@
-﻿import { Router, Request, Response, NextFunction } from "express";
+import { Router, Request, Response, NextFunction } from "express";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { randomUUID } from "crypto";
@@ -9,7 +9,7 @@ const JWT_SECRET = process.env.JWT_SECRET || "change-this-in-production-" + rand
 export const auth = Router();
 
 // Register
-await userDB.create({ id, email, password_hash, name, api_key });
+auth.post("/register", async (req, res) => {
   try {
     const { email, password, name } = req.body;
     
@@ -17,7 +17,7 @@ await userDB.create({ id, email, password_hash, name, api_key });
       return res.status(400).json({ error: "Email and password required" });
     }
     
-    const existing = userDB.findByEmail(email);
+    const existing = await userDB.findByEmail(email);
     if (existing) {
       return res.status(400).json({ error: "Email already registered" });
     }
@@ -26,7 +26,7 @@ await userDB.create({ id, email, password_hash, name, api_key });
     const id = randomUUID();
     const api_key = "sk_" + randomUUID().replace(/-/g, "");
     
-    userDB.create({ id, email, password_hash, name, api_key });
+    await userDB.create({ id, email, password_hash, name, api_key, plan: "free" });
     
     const token = jwt.sign({ userId: id, email }, JWT_SECRET, { expiresIn: "7d" });
     
@@ -38,14 +38,15 @@ await userDB.create({ id, email, password_hash, name, api_key });
     });
   } catch (e: any) {
     res.status(500).json({ error: e.message });
-
+  }
+});
 
 // Login
 auth.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
     
-    const user: any = userDB.findByEmail(email);
+    const user: any = await userDB.findByEmail(email);
     if (!user) {
       return res.status(401).json({ error: "Invalid credentials" });
     }
