@@ -1,25 +1,11 @@
-// Auto-detect: Use PostgreSQL if DATABASE_URL exists, otherwise SQLite
+import * as sqlite from './sqlite.js';
+import * as postgres from './postgres.js';
+
 const usePostgres = !!process.env.DATABASE_URL;
 
-let initDB: any;
-let userDB: any;
-let usageDB: any;
-let db: any;
+console.log(usePostgres ? 'Using PostgreSQL' : 'Using SQLite (local dev)');
 
-if (usePostgres) {
-  console.log('Using PostgreSQL');
-  const pg = require('./postgres.js');
-  initDB = pg.initDB;
-  userDB = pg.userDB;
-  usageDB = pg.usageDB;
-  db = pg.db;
-} else {
-  console.log('Using SQLite (local dev)');
-  const sqlite = require('./sqlite.js');
-  initDB = sqlite.initDB;
-  userDB = sqlite.userDB;
-  usageDB = sqlite.usageDB;
-  db = sqlite.db;
-}
-
-export { initDB, userDB, usageDB, db };
+export const initDB = usePostgres ? postgres.initDB : sqlite.initDB;
+export const userDB = usePostgres ? postgres.userDB : sqlite.userDB;
+export const usageDB = usePostgres ? postgres.usageDB : sqlite.usageDB;
+export const db = usePostgres ? postgres.db : sqlite.db;
