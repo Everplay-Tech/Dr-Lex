@@ -39,7 +39,7 @@ await userDB.create({ id, email, password_hash, name, api_key });
   } catch (e: any) {
     res.status(500).json({ error: e.message });
   }
-});
+);
 
 // Login
 auth.post("/login", async (req, res) => {
