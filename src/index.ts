@@ -18,6 +18,54 @@ app.post("/api/billing/webhook", express.raw({ type: "application/json" }), asyn
   const { billing } = await import("./routes/billing.js");
   billing(req, res, next);
 });
+// Diagnostic endpoint for PostgreSQL testing
+app.get("/api/diagnostic/db", async (req, res) => {
+  const results: any = {
+    env: {
+      hasDatabaseURL: !!process.env.DATABASE_URL,
+      nodeEnv: process.env.NODE_ENV,
+    },
+    tests: {}
+  };
+
+  try {
+    // Test 1: Can we import pg?
+    results.tests.pgImport = "attempting...";
+    const pgModule = await import('pg');
+    results.tests.pgImport = "success";
+    results.tests.pgHasPool = !!pgModule.Pool;
+    
+    // Test 2: Can we create a Pool?
+    if (process.env.DATABASE_URL) {
+      results.tests.poolCreation = "attempting...";
+      const { Pool } = pgModule;
+      const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+      results.tests.poolCreation = "success";
+      
+      // Test 3: Can we query?
+      results.tests.query = "attempting...";
+      const result = await pool.query('SELECT NOW()');
+      results.tests.query = "success";
+      results.tests.queryResult = result.rows[0];
+      
+      await pool.end();
+    }
+    
+    // Test 4: Can we import our postgres module?
+    results.tests.postgresModule = "attempting...";
+    const postgres = await import('./db/postgres.js');
+    results.tests.postgresModule = "success";
+    results.tests.hasUserDB = !!postgres.userDB;
+    
+  } catch (error: any) {
+    results.error = {
+      message: error.message,
+      stack: error.stack
+    };
+  }
+  
+  res.json(results);
+});
 
 app.use(express.json());
 
