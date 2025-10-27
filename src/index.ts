@@ -27,35 +27,27 @@ app.get("/api/diagnostic/db", async (req, res) => {
     },
     tests: {}
   };
-
+  
   try {
-    // Test 1: Can we import pg?
-    results.tests.pgImport = "attempting...";
-    const pgModule = await import('pg');
-    results.tests.pgImport = "success";
-    results.tests.pgHasPool = !!pgModule.Pool;
+    // Test 1: Can we import postgres package?
+    results.tests.postgresImport = "attempting...";
+    const postgresLib = await import('postgres');
+    results.tests.postgresImport = "success";
+    results.tests.hasDefault = !!postgresLib.default;
     
-    // Test 2: Can we create a Pool?
-    if (process.env.DATABASE_URL) {
-      results.tests.poolCreation = "attempting...";
-      const { Pool } = pgModule;
-      const pool = new Pool({ connectionString: process.env.DATABASE_URL });
-      results.tests.poolCreation = "success";
-      
-      // Test 3: Can we query?
-      results.tests.query = "attempting...";
-      const result = await pool.query('SELECT NOW()');
-      results.tests.query = "success";
-      results.tests.queryResult = result.rows[0];
-      
-      await pool.end();
-    }
-    
-    // Test 4: Can we import our postgres module?
+    // Test 2: Can we import our postgres module?
     results.tests.postgresModule = "attempting...";
     const postgres = await import('./db/postgres.js');
     results.tests.postgresModule = "success";
     results.tests.hasUserDB = !!postgres.userDB;
+    results.tests.hasInitDB = !!postgres.initDB;
+    
+    // Test 3: Can we call initDB?
+    if (process.env.DATABASE_URL) {
+      results.tests.initDB = "attempting...";
+      await postgres.initDB();
+      results.tests.initDB = "success";
+    }
     
   } catch (error: any) {
     results.error = {
@@ -63,6 +55,9 @@ app.get("/api/diagnostic/db", async (req, res) => {
       stack: error.stack
     };
   }
+  
+  res.json(results);
+});
   
   res.json(results);
 });
