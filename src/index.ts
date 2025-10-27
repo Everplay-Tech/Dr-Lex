@@ -56,9 +56,7 @@ app.get("/api/diagnostic/db", async (req, res) => {
     };
   }
   
-  res.json(results);
-});
-  
+
   res.json(results);
 });
 
