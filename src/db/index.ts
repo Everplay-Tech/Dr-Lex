@@ -1,27 +1,73 @@
 import * as sqlite from './sqlite.js';
-import * as postgres from './postgres.js';
 
 const usePostgres = !!process.env.DATABASE_URL;
 
-console.log(usePostgres ? 'Using PostgreSQL' : 'Using SQLite');
+console.log(usePostgres ? 'Using PostgreSQL (will initialize on first use)' : 'Using SQLite');
 
-// Wrapper functions that choose the right DB at runtime
-export const initDB = () => {
-  return usePostgres ? postgres.initDB() : sqlite.initDB();
-};
+// Lazy-load PostgreSQL only when actually used
+let postgresModule: any = null;
+
+async function getPostgres() {
+  if (!postgresModule) {
+    postgresModule = await import('./postgres.js');
+  }
+  return postgresModule;
+}
+
+export async function initDB() {
+  if (usePostgres) {
+    const pg = await getPostgres();
+    return pg.initDB();
+  }
+  return sqlite.initDB();
+}
 
 export const userDB = {
-  create: (user: any) => usePostgres ? postgres.userDB.create(user) : sqlite.userDB.create(user),
-  findByEmail: (email: string) => usePostgres ? postgres.userDB.findByEmail(email) : sqlite.userDB.findByEmail(email),
-  findById: (id: string) => usePostgres ? postgres.userDB.findById(id) : sqlite.userDB.findById(id),
-  findByApiKey: (key: string) => usePostgres ? postgres.userDB.findByApiKey(key) : sqlite.userDB.findByApiKey(key),
+  create: async (user: any) => {
+    if (usePostgres) {
+      const pg = await getPostgres();
+      return pg.userDB.create(user);
+    }
+    return sqlite.userDB.create(user);
+  },
+  findByEmail: async (email: string) => {
+    if (usePostgres) {
+      const pg = await getPostgres();
+      return pg.userDB.findByEmail(email);
+    }
+    return sqlite.userDB.findByEmail(email);
+  },
+  findById: async (id: string) => {
+    if (usePostgres) {
+      const pg = await getPostgres();
+      return pg.userDB.findById(id);
+    }
+    return sqlite.userDB.findById(id);
+  },
+  findByApiKey: async (key: string) => {
+    if (usePostgres) {
+      const pg = await getPostgres();
+      return pg.userDB.findByApiKey(key);
+    }
+    return sqlite.userDB.findByApiKey(key);
+  },
 };
 
 export const usageDB = {
-  record: (userId: string, missionId: string, botType: string, energy: number) => 
-    usePostgres ? postgres.usageDB.record(userId, missionId, botType, energy) : sqlite.usageDB.record(userId, missionId, botType, energy),
-  getUsage: (userId: string, after?: string) => 
-    usePostgres ? postgres.usageDB.getUsage(userId, after) : sqlite.usageDB.getUsage(userId, after),
+  record: async (userId: string, missionId: string, botType: string, energy: number) => {
+    if (usePostgres) {
+      const pg = await getPostgres();
+      return pg.usageDB.record(userId, missionId, botType, energy);
+    }
+    return sqlite.usageDB.record(userId, missionId, botType, energy);
+  },
+  getUsage: async (userId: string, after?: string) => {
+    if (usePostgres) {
+      const pg = await getPostgres();
+      return pg.usageDB.getUsage(userId, after);
+    }
+    return sqlite.usageDB.getUsage(userId, after);
+  },
 };
 
-export const db = usePostgres ? postgres.db : sqlite.db;
+export const db = sqlite.db; // For now, return sqlite's db object
