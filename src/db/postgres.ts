@@ -1,13 +1,11 @@
-// @ts-ignore
-const { Pool } = require('pg');
+import postgres from 'postgres';
 
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
+const sql = postgres(process.env.DATABASE_URL!, {
+  ssl: process.env.NODE_ENV === 'production' ? 'require' : false,
 });
 
 export async function initDB() {
-  await pool.query(`
+  await sql`
     CREATE TABLE IF NOT EXISTS users (
       id TEXT PRIMARY KEY,
       email TEXT UNIQUE NOT NULL,
@@ -17,9 +15,9 @@ export async function initDB() {
       api_key TEXT UNIQUE,
       created_at TIMESTAMPTZ DEFAULT NOW()
     )
-  `);
+  `;
 
-  await pool.query(`
+  await sql`
     CREATE TABLE IF NOT EXISTS usage (
       id SERIAL PRIMARY KEY,
       user_id TEXT NOT NULL REFERENCES users(id),
@@ -28,59 +26,59 @@ export async function initDB() {
       energy_used INTEGER NOT NULL,
       timestamp TIMESTAMPTZ DEFAULT NOW()
     )
-  `);
+  `;
 
-  console.log('Database initialized');
+  console.log('PostgreSQL database initialized');
 }
 
 export const userDB = {
   create: async (user: any) => {
     const { id, email, password_hash, name, api_key } = user;
-    await pool.query(
-      'INSERT INTO users (id, email, password_hash, name, api_key) VALUES ($1, $2, $3, $4, $5)',
-      [id, email, password_hash, name, api_key]
-    );
+    await sql`
+      INSERT INTO users (id, email, password_hash, name, api_key)
+      VALUES (${id}, ${email}, ${password_hash}, ${name}, ${api_key})
+    `;
   },
   
   findByEmail: async (email: string) => {
-    const result = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
-    return result.rows[0] || null;
+    const result = await sql`SELECT * FROM users WHERE email = ${email}`;
+    return result[0] || null;
   },
   
   findById: async (id: string) => {
-    const result = await pool.query('SELECT * FROM users WHERE id = $1', [id]);
-    return result.rows[0] || null;
+    const result = await sql`SELECT * FROM users WHERE id = ${id}`;
+    return result[0] || null;
   },
   
   findByApiKey: async (apiKey: string) => {
-    const result = await pool.query('SELECT * FROM users WHERE api_key = $1', [apiKey]);
-    return result.rows[0] || null;
+    const result = await sql`SELECT * FROM users WHERE api_key = ${apiKey}`;
+    return result[0] || null;
   }
 };
 
 export const usageDB = {
   record: async (userId: string, missionId: string, botType: string, energyUsed: number) => {
-    await pool.query(
-      'INSERT INTO usage (user_id, mission_id, bot_type, energy_used) VALUES ($1, $2, $3, $4)',
-      [userId, missionId, botType, energyUsed]
-    );
+    await sql`
+      INSERT INTO usage (user_id, mission_id, bot_type, energy_used)
+      VALUES (${userId}, ${missionId}, ${botType}, ${energyUsed})
+    `;
   },
   
   getUsage: async (userId: string, after?: string) => {
     if (after) {
-      const result = await pool.query(
-        'SELECT * FROM usage WHERE user_id = $1 AND timestamp >= $2 ORDER BY timestamp DESC',
-        [userId, after]
-      );
-      return result.rows;
+      return await sql`
+        SELECT * FROM usage 
+        WHERE user_id = ${userId} AND timestamp >= ${after}
+        ORDER BY timestamp DESC
+      `;
     } else {
-      const result = await pool.query(
-        'SELECT * FROM usage WHERE user_id = $1 ORDER BY timestamp DESC',
-        [userId]
-      );
-      return result.rows;
+      return await sql`
+        SELECT * FROM usage 
+        WHERE user_id = ${userId}
+        ORDER BY timestamp DESC
+      `;
     }
   }
 };
 
-export const db = pool;
+export const db = sql;
