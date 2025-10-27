@@ -63,7 +63,7 @@ export async function spawnBot(missionInput: Partial<Mission>): Promise<{mission
   emit({ mission_id: mission.id!, ts: new Date().toISOString(), level: "info", payload: { msg: "spawn", script, policy_id: policy?.id, policy_checksum: policy ? checksum(policy) : null }});
 
   const missionArg = JSON.stringify({ mission, policy });
-  const proc = spawn("python", [script, missionArg], { stdio: ["ignore","pipe","pipe"] });
+  const proc = spawn("python3", [script, missionArg], { stdio: ["ignore","pipe","pipe"] });
 
   const start = Date.now();
   const maxMs = Math.min((policy?.budget?.max_ms ?? 10_000), (mission.energy_limit || 1_000_000));
