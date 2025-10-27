@@ -9,7 +9,7 @@ const JWT_SECRET = process.env.JWT_SECRET || "change-this-in-production-" + rand
 export const auth = Router();
 
 // Register
-auth.post("/register", async (req, res) => {
+await userDB.create({ id, email, password_hash, name, api_key });
   try {
     const { email, password, name } = req.body;
     
