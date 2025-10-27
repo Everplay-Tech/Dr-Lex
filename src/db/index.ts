@@ -4,17 +4,17 @@ const USE_POSTGRES = !!process.env.DATABASE_URL;
 
 console.log(USE_POSTGRES ? '🐘 Using PostgreSQL' : '💾 Using SQLite');
 
-let db: Database;
+let dbInstance: Database;
 
 if (USE_POSTGRES) {
   const { postgresDB } = await import('./postgres.js');
-  db = postgresDB;
+  dbInstance = postgresDB;
 } else {
   const { sqliteDB } = await import('./sqlite.js');
-  db = sqliteDB;
+  dbInstance = sqliteDB;
 }
 
 // Export clean interface
-export const initDB = () => db.init();
-export const userDB = db.users;
-export const usageDB = db.usage;
+export const initDB = () => dbInstance.init();
+export const userDB = dbInstance.users;
+export const usageDB = dbInstance.usage;
