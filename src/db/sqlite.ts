@@ -1,70 +1,62 @@
-import postgres from 'postgres';
-import type { Database, User, Usage } from './types.js';
+import Database from "better-sqlite3";
+import type { Database as DatabaseInterface, User, Usage } from './types.js';
 
-// Create connection with Railway-optimized settings
-const sql = postgres(process.env.DATABASE_URL!, {
-  ssl: 'prefer', // Changed from 'require' to 'prefer'
-  max: 10,
-  idle_timeout: 20,
-  connect_timeout: 30,
-  prepare: false, // Disable prepared statements for compatibility
-});
+const db = new Database("dr-lex.db");
 
 const users = {
   async create(user: Omit<User, 'created_at'>) {
-    await sql`
-      INSERT INTO users ${sql(user)}
-    `;
+    const stmt = db.prepare(`
+      INSERT INTO users (id, email, password_hash, name, plan, api_key)
+      VALUES (?, ?, ?, ?, ?, ?)
+    `);
+    stmt.run(user.id, user.email, user.password_hash, user.name, user.plan || 'free', user.api_key);
   },
 
   async findByEmail(email: string): Promise<User | null> {
-    const [user] = await sql<User[]>`
-      SELECT * FROM users WHERE email = ${email} LIMIT 1
-    `;
-    return user || null;
+    const stmt = db.prepare('SELECT * FROM users WHERE email = ?');
+    return stmt.get(email) as User || null;
   },
 
   async findById(id: string): Promise<User | null> {
-    const [user] = await sql<User[]>`
-      SELECT * FROM users WHERE id = ${id} LIMIT 1
-    `;
-    return user || null;
+    const stmt = db.prepare('SELECT * FROM users WHERE id = ?');
+    return stmt.get(id) as User || null;
   },
 
   async findByApiKey(apiKey: string): Promise<User | null> {
-    const [user] = await sql<User[]>`
-      SELECT * FROM users WHERE api_key = ${apiKey} LIMIT 1
-    `;
-    return user || null;
+    const stmt = db.prepare('SELECT * FROM users WHERE api_key = ?');
+    return stmt.get(apiKey) as User || null;
   }
 };
 
 const usage = {
   async record(userId: string, missionId: string, botType: string, energyUsed: number) {
-    await sql`
-      INSERT INTO usage (user_id, mission_id, bot_type, energy_used)
-      VALUES (${userId}, ${missionId}, ${botType}, ${energyUsed})
-    `;
+    const stmt = db.prepare(`
+      INSERT INTO usage (user_id, mission_id, bot_type, energy_used, timestamp)
+      VALUES (?, ?, ?, ?, datetime('now'))
+    `);
+    stmt.run(userId, missionId, botType, energyUsed);
   },
 
   async getUsage(userId: string, after?: string): Promise<Usage[]> {
     if (after) {
-      return await sql<Usage[]>`
+      const stmt = db.prepare(`
         SELECT * FROM usage 
-        WHERE user_id = ${userId} AND timestamp >= ${after}
+        WHERE user_id = ? AND timestamp >= ?
         ORDER BY timestamp DESC
-      `;
+      `);
+      return stmt.all(userId, after) as Usage[];
     }
-    return await sql<Usage[]>`
+    const stmt = db.prepare(`
       SELECT * FROM usage 
-      WHERE user_id = ${userId}
+      WHERE user_id = ?
       ORDER BY timestamp DESC
-    `;
+    `);
+    return stmt.all(userId) as Usage[];
   }
 };
 
 async function init() {
-  await sql`
+  db.exec(`
     CREATE TABLE IF NOT EXISTS users (
       id TEXT PRIMARY KEY,
       email TEXT UNIQUE NOT NULL,
@@ -72,25 +64,26 @@ async function init() {
       name TEXT,
       plan TEXT DEFAULT 'free',
       api_key TEXT UNIQUE,
-      created_at TIMESTAMPTZ DEFAULT NOW()
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )
-  `;
+  `);
 
-  await sql`
+  db.exec(`
     CREATE TABLE IF NOT EXISTS usage (
-      id SERIAL PRIMARY KEY,
-      user_id TEXT NOT NULL REFERENCES users(id),
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_id TEXT NOT NULL,
       mission_id TEXT NOT NULL,
       bot_type TEXT NOT NULL,
       energy_used INTEGER NOT NULL,
-      timestamp TIMESTAMPTZ DEFAULT NOW()
+      timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (user_id) REFERENCES users(id)
     )
-  `;
+  `);
 
-  console.log('PostgreSQL initialized');
+  console.log('SQLite initialized');
 }
 
-export const sqliteDB: Database = {
+export const sqliteDB: DatabaseInterface = {
   init,
   users,
   usage
